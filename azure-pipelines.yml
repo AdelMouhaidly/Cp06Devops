@@ -36,6 +36,11 @@ stages:
               fi
             displayName: 'Detect project path'
 
+          - script: |
+              chmod +x $(projectPath)/gradlew
+              echo "Gradle wrapper is now executable"
+            displayName: 'Make gradlew executable'
+
           - task: Gradle@3
             displayName: 'Build and Test Application'
             inputs:
