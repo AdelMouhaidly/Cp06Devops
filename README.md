@@ -9,6 +9,13 @@
 
 ---
 
+## Links do Projeto
+
+- **Azure DevOps**: [https://dev.azure.com/RM558485/CP06Devops](https://dev.azure.com/RM558485/CP06Devops)
+- **WebApp (Aplicação)**: [https://2tds251cp6557705.azurewebsites.net](https://2tds251cp6557705.azurewebsites.net)
+
+---
+
 ## Evidências
 
 ### 1. Pipeline Executando (Build e Testes)
