@@ -39,14 +39,21 @@ stages:
           - script: |
               chmod +x $(projectPath)/gradlew
               echo "Gradle wrapper is now executable"
-            displayName: 'Make gradlew executable'
+              echo "Project path: $(projectPath)"
+              ls -la $(projectPath) | head -20
+            displayName: 'Make gradlew executable and verify'
+
+          - script: |
+              cd $(projectPath)
+              ./gradlew --version
+            displayName: 'Check Gradle version'
 
           - task: Gradle@3
             displayName: 'Build and Test Application'
             inputs:
               workingDirectory: '$(projectPath)'
               gradleWrapperFile: '$(projectPath)/gradlew'
-              options: '-Xmx3072m'
+              options: '-Xmx3072m --stacktrace --info'
               tasks: 'clean build'
               publishJUnitResults: true
               testResultsFiles: '**/TEST-*.xml'
