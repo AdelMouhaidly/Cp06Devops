@@ -9,32 +9,7 @@
 
 ---
 
-## Descrição do Projeto
-
-Este projeto implementa uma solução completa de DevOps e CI/CD para a aplicação **transactions-services** do banco DimDim. A solução automatiza todo o ciclo de vida da aplicação, desde a compilação e testes até o deploy em produção no Azure.
-
-A aplicação é um serviço de transações bancárias desenvolvido em **Kotlin** com **Spring Boot**, responsável por:
-
-- Processamento de transferências, TEDs, PIX, depósitos e saques
-- Controle de extratos bancários
-
-A infraestrutura utiliza:
-
-- **Azure DevOps** para CI/CD Pipeline
-- **Azure Container Registry (ACR)** para armazenamento de imagens Docker
-- **Azure Web App** para hospedagem da aplicação
-- **Azure SQL Database** para persistência de dados
-
-O pipeline automatizado realiza:
-
-1. Build e execução de testes automatizados
-2. Geração de imagem Docker
-3. Push da imagem para o ACR
-4. Deploy automático no Azure Web App
-
----
-
-## Evidências da Implementação
+## Evidências
 
 ### 1. Pipeline Executando (Build e Testes)
 

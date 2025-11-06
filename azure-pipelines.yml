@@ -1,5 +1,6 @@
-# Pipeline automatically triggers on push to main/master branches
-# Excludes markdown files and evidence folder
+# Azure DevOps CI/CD Pipeline for transactions-services
+# Automates: Build, Test, Docker Build, Push to ACR, Deploy to WebApp
+
 trigger:
   branches:
     include:
@@ -9,72 +10,71 @@ trigger:
     exclude:
       - README.md
       - '*.md'
-      - 'evidencias/**'
+      - evidencias/**
 
 variables:
-  - group: 557705-variables
+  - group: AzureResources  # Variable group with Azure resource names
   - name: imageName
     value: 'transaction'
-  - name: tag
-    value: '$(Build.BuildId)'
+  - name: dockerfilePath
+    value: '$(Build.SourcesDirectory)/Dockerfile'
+  - name: buildContext
+    value: '$(Build.SourcesDirectory)'
 
 stages:
   - stage: Build
     displayName: 'Build and Test'
     jobs:
       - job: BuildJob
-        displayName: 'Build Application'
+        displayName: 'Build and Test Application'
         pool:
           vmImage: 'ubuntu-latest'
         
         steps:
-          - script: |
-              if [ -f "$(Build.SourcesDirectory)/gradlew" ]; then
-                echo "##vso[task.setvariable variable=projectPath]$(Build.SourcesDirectory)"
-              elif [ -f "$(Build.SourcesDirectory)/2tdsa-cp6-cp06/gradlew" ]; then
-                echo "##vso[task.setvariable variable=projectPath]$(Build.SourcesDirectory)/2tdsa-cp6-cp06"
-              else
-                echo "Gradle wrapper not found!"
-                exit 1
-              fi
-            displayName: 'Detect project path'
-
-          - script: |
-              chmod +x $(projectPath)/gradlew
-              echo "Gradle wrapper is now executable"
-              echo "Project path: $(projectPath)"
-              ls -la $(projectPath) | head -20
-            displayName: 'Make gradlew executable and verify'
-
-          - task: JavaToolInstaller@0
-            displayName: 'Setup Java 21'
+          - task: UseJavaVersion@1
+            displayName: 'Set Java Version'
             inputs:
               versionSpec: '21'
               jdkArchitectureOption: 'x64'
-              jdkSourceOption: 'PreInstalled'
 
           - script: |
-              cd $(projectPath)
-              echo "=== Java Version ==="
-              java -version
-              echo "=== Checking Gradle version ==="
-              ./gradlew --version
-              echo "=== Step 1: Clean ==="
-              ./gradlew clean || exit 1
-              echo "=== Step 2: Compile ==="
-              ./gradlew compileKotlin --stacktrace || exit 1
-              echo "=== Step 3: Build JAR ==="
-              ./gradlew bootJar --stacktrace || exit 1
-              echo "=== Step 4: Run Tests ==="
-              ./gradlew test --stacktrace || echo "=== Tests failed but continuing ==="
+              chmod +x gradlew
+              echo "Gradle wrapper is executable"
+            displayName: 'Make gradlew executable'
+
+          - task: Gradle@3
             displayName: 'Build and Test Application'
-          
+            inputs:
+              tasks: 'clean build'
+              workingDirectory: '$(Build.SourcesDirectory)'
+              options: '--stacktrace --info'
+              publishJUnitResults: true
+              testResultsFiles: '**/TEST-*.xml'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.21'
+              jdkArchitectureOption: 'x64'
+
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             condition: always()
             inputs:
               testResultsFiles: '**/TEST-*.xml'
               testRunTitle: 'Test Results'
+              mergeTestResults: true
+
+          - task: CopyFiles@2
+            displayName: 'Copy JAR to Artifacts'
+            inputs:
+              SourceFolder: '$(Build.SourcesDirectory)/build/libs'
+              Contents: '*.jar'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Build Artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
 
   - stage: Docker
     displayName: 'Build and Push Docker Image'
@@ -93,19 +93,6 @@ stages:
               command: 'login'
               containerRegistry: 'ACRConnection'
 
-          - script: |
-              if [ -f "$(Build.SourcesDirectory)/Dockerfile" ]; then
-                echo "##vso[task.setvariable variable=dockerfilePath]$(Build.SourcesDirectory)/Dockerfile"
-                echo "##vso[task.setvariable variable=buildContext]$(Build.SourcesDirectory)"
-              elif [ -f "$(Build.SourcesDirectory)/2tdsa-cp6-cp06/Dockerfile" ]; then
-                echo "##vso[task.setvariable variable=dockerfilePath]$(Build.SourcesDirectory)/2tdsa-cp6-cp06/Dockerfile"
-                echo "##vso[task.setvariable variable=buildContext]$(Build.SourcesDirectory)/2tdsa-cp6-cp06"
-              else
-                echo "Dockerfile not found!"
-                exit 1
-              fi
-            displayName: 'Detect Dockerfile path'
-
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
             inputs:
@@ -115,7 +102,7 @@ stages:
               dockerfile: '$(dockerfilePath)'
               buildContext: '$(buildContext)'
               tags: |
-                $(tag)
+                $(Build.BuildId)
                 latest
 
   - stage: Deploy
@@ -133,7 +120,7 @@ stages:
             deploy:
               steps:
                 - task: AzureCLI@2
-                  displayName: 'Configure Web App Settings'
+                  displayName: 'Configure Web App Environment Variables'
                   inputs:
                     azureSubscription: 'AzureConnection'
                     scriptType: 'bash'
@@ -144,7 +131,7 @@ stages:
                         --resource-group $(RG) \
                         --settings \
                           WEBSITES_PORT=8080 \
-                          SPRING_DATASOURCE_URL="jdbc:sqlserver://$(SERVER_NAME).database.windows.net:1433;database=$(DBNAME);encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;" \
+                          SPRING_DATASOURCE_URL="jdbc:postgresql://$(SERVER_NAME).postgres.database.azure.com:5432/$(DBNAME)?sslmode=require" \
                           SPRING_DATASOURCE_USERNAME="$(DB_USERNAME)" \
                           SPRING_DATASOURCE_PASSWORD="$(DB_PASSWORD)"
 
@@ -153,6 +140,5 @@ stages:
                   inputs:
                     azureSubscription: 'AzureConnection'
                     appName: '$(WEBAPP_NAME)'
-                    imageName: '$(ACR_NAME).azurecr.io/$(imageName):$(tag)'
+                    imageName: '$(ACR_NAME).azurecr.io/$(imageName):$(Build.BuildId)'
                     containerRegistryEndpoint: 'ACRConnection'
-
