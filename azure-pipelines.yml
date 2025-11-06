@@ -4,9 +4,21 @@ trigger:
       - main
       - master
   paths:
+    include:
+      - '**/*.kt'
+      - '**/*.java'
+      - '**/*.kts'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/Dockerfile'
+      - '**/*.properties'
+      - '**/*.sql'
+      - '**/build.gradle*'
+      - '**/gradlew*'
     exclude:
       - README.md
-      - '*.md'
+      - '**/*.md'
+      - 'evidencias/**'
 
 variables:
   - group: 557705-variables
