@@ -13,41 +13,41 @@
 
 ### 1. Pipeline Executando (Build e Testes)
 
-![Evidência 1: Pipeline Build e Testes](evidencias/evidencia-1-pipeline-build.png)
+![Evidência 1: Pipeline Build e Testes](evidencias/evidencia2.png)
 
-_Descrição: Print da execução do pipeline mostrando o stage Build com compilação e testes executados com sucesso._
+_Descrição: Captura de tela do Azure DevOps mostrando a execução do pipeline com sucesso no stage Build. A imagem exibe o job "Build and Test Application" com todas as tasks executadas, incluindo a instalação do Java 21, compilação do código Kotlin com Gradle, execução dos testes automatizados e publicação dos resultados dos testes._
 
 ---
 
 ### 2. Imagem Docker no Azure Container Registry
 
-![Evidência 2: Imagem Docker no ACR](evidencias/evidencia-2-acr-imagem.png)
+![Evidência 2: Imagem Docker no ACR](evidencias/evidencia3.png)
 
-_Descrição: Print do Azure Container Registry mostrando a imagem `transaction` com as tags `latest` e o Build ID._
+_Descrição: Captura de tela do portal Azure mostrando o Azure Container Registry (ACR) com a imagem Docker `transaction` armazenada. A imagem exibe os detalhes da imagem incluindo as tags criadas (`latest` e o Build ID do pipeline), tamanho da imagem, data de criação e status do repositório._
 
 ---
 
 ### 3. Deploy no Azure Web App
 
-![Evidência 3: Deploy no WebApp](evidencias/evidencia-3-deploy-webapp.png)
+![Evidência 3: Deploy no WebApp](evidencias/evidencia4.png)
 
-_Descrição: Print do stage Deploy no pipeline mostrando o deploy concluído com sucesso e a configuração do container._
+_Descrição: Captura de tela do Azure DevOps mostrando o stage Deploy do pipeline executado com sucesso. A imagem exibe o job "Deploy to Web App" no ambiente Production, mostrando as tasks de configuração das variáveis de ambiente do WebApp (incluindo conexão com PostgreSQL) e o deploy do container Docker da imagem do ACR._
 
 ---
 
 ### 4. Aplicação Funcionando no WebApp
 
-![Evidência 4: Aplicação Funcionando](evidencias/evidencia-4-app-funcionando.png)
+![Evidência 4: Aplicação Funcionando](evidencias/evidencia5.png)
 
-_Descrição: Print da aplicação acessível e funcionando no WebApp, mostrando a URL e a resposta da API._
+_Descrição: Captura de tela do navegador mostrando a aplicação transactions-services acessível e funcionando no Azure Web App. A imagem exibe a URL do WebApp (ex: `https://2tds251cp6557705.azurewebsites.net`), a resposta da API Spring Boot, status da aplicação e possíveis endpoints disponíveis através do Actuator ou respostas HTTP da API._
 
 ---
 
 ### 5. Logs do Pipeline Completo
 
-![Evidência 5: Logs do Pipeline](evidencias/evidencia-5-logs-pipeline.png)
+![Evidência 5: Logs do Pipeline](evidencias/evidencia6.png)
 
-_Descrição: Print dos logs completos do pipeline mostrando todas as etapas (Build → Docker → Deploy) executadas com sucesso._
+_Descrição: Captura de tela do Azure DevOps mostrando o resumo completo da execução do pipeline com todos os stages. A imagem exibe a visão geral do pipeline com os três stages (Build, Docker, Deploy) todos marcados como concluídos com sucesso, incluindo tempos de execução, status de cada stage e a linha do tempo completa da execução do pipeline de CI/CD._
 
 ---
 

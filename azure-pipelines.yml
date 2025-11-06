@@ -9,125 +9,125 @@ trigger:
   paths:
     exclude:
       - README.md
-      - '*.md'
+      - "*.md"
       - evidencias/**
 
 variables:
-  - group: AzureResources  # Variable group with Azure resource names
+  - group: AzureResources 
   - name: imageName
-    value: 'transaction'
+    value: "transaction"
   - name: dockerfilePath
-    value: '$(Build.SourcesDirectory)/Dockerfile'
+    value: "$(Build.SourcesDirectory)/Dockerfile"
   - name: buildContext
-    value: '$(Build.SourcesDirectory)'
+    value: "$(Build.SourcesDirectory)"
 
 stages:
   - stage: Build
-    displayName: 'Build and Test'
+    displayName: "Build and Test"
     jobs:
       - job: BuildJob
-        displayName: 'Build and Test Application'
+        displayName: "Build and Test Application"
         pool:
-          vmImage: 'ubuntu-latest'
-        
+          vmImage: "ubuntu-latest"
+
         steps:
           - task: JavaToolInstaller@0
-            displayName: 'Install Java 21'
+            displayName: "Install Java 21"
             inputs:
-              versionSpec: '21'
-              jdkArchitectureOption: 'x64'
-              jdkSourceOption: 'PreInstalled'
+              versionSpec: "21"
+              jdkArchitectureOption: "x64"
+              jdkSourceOption: "PreInstalled"
 
           - script: |
               chmod +x gradlew
               echo "Gradle wrapper is executable"
               echo "Java version:"
               java -version
-            displayName: 'Make gradlew executable and verify Java'
+            displayName: "Make gradlew executable and verify Java"
 
           - task: Gradle@3
-            displayName: 'Build and Test Application'
+            displayName: "Build and Test Application"
             inputs:
-              tasks: 'clean build'
-              workingDirectory: '$(Build.SourcesDirectory)'
-              options: '--stacktrace --info'
+              tasks: "clean build"
+              workingDirectory: "$(Build.SourcesDirectory)"
+              options: "--stacktrace --info"
               publishJUnitResults: true
-              testResultsFiles: '**/TEST-*.xml'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: '1.21'
-              jdkArchitectureOption: 'x64'
+              testResultsFiles: "**/TEST-*.xml"
+              javaHomeOption: "JDKVersion"
+              jdkVersionOption: "1.21"
+              jdkArchitectureOption: "x64"
 
           - task: PublishTestResults@2
-            displayName: 'Publish Test Results'
+            displayName: "Publish Test Results"
             condition: always()
             inputs:
-              testResultsFiles: '**/TEST-*.xml'
-              testRunTitle: 'Test Results'
+              testResultsFiles: "**/TEST-*.xml"
+              testRunTitle: "Test Results"
               mergeTestResults: true
 
           - task: CopyFiles@2
-            displayName: 'Copy JAR to Artifacts'
+            displayName: "Copy JAR to Artifacts"
             inputs:
-              SourceFolder: '$(Build.SourcesDirectory)/build/libs'
-              Contents: '*.jar'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+              SourceFolder: "$(Build.SourcesDirectory)/build/libs"
+              Contents: "*.jar"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)"
 
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Build Artifacts'
+            displayName: "Publish Build Artifacts"
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'drop'
-              publishLocation: 'Container'
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "drop"
+              publishLocation: "Container"
 
   - stage: Docker
-    displayName: 'Build and Push Docker Image'
+    displayName: "Build and Push Docker Image"
     dependsOn: Build
     condition: succeeded()
     jobs:
       - job: DockerJob
-        displayName: 'Docker Build and Push'
+        displayName: "Docker Build and Push"
         pool:
-          vmImage: 'ubuntu-latest'
-        
+          vmImage: "ubuntu-latest"
+
         steps:
           - task: Docker@2
-            displayName: 'Login to Azure Container Registry'
+            displayName: "Login to Azure Container Registry"
             inputs:
-              command: 'login'
-              containerRegistry: 'ACRConnection'
+              command: "login"
+              containerRegistry: "ACRConnection"
 
           - task: Docker@2
-            displayName: 'Build and Push Docker Image'
+            displayName: "Build and Push Docker Image"
             inputs:
-              command: 'buildAndPush'
-              repository: '$(imageName)'
-              containerRegistry: 'ACRConnection'
-              dockerfile: '$(dockerfilePath)'
-              buildContext: '$(buildContext)'
+              command: "buildAndPush"
+              repository: "$(imageName)"
+              containerRegistry: "ACRConnection"
+              dockerfile: "$(dockerfilePath)"
+              buildContext: "$(buildContext)"
               tags: |
                 $(Build.BuildId)
                 latest
 
   - stage: Deploy
-    displayName: 'Deploy to Azure Web App'
+    displayName: "Deploy to Azure Web App"
     dependsOn: Docker
     condition: succeeded()
     jobs:
       - deployment: DeployJob
-        displayName: 'Deploy to Web App'
+        displayName: "Deploy to Web App"
         pool:
-          vmImage: 'ubuntu-latest'
-        environment: 'Production'
+          vmImage: "ubuntu-latest"
+        environment: "Production"
         strategy:
           runOnce:
             deploy:
               steps:
                 - task: AzureCLI@2
-                  displayName: 'Configure Web App Environment Variables'
+                  displayName: "Configure Web App Environment Variables"
                   inputs:
-                    azureSubscription: 'AzureConnection'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
+                    azureSubscription: "AzureConnection"
+                    scriptType: "bash"
+                    scriptLocation: "inlineScript"
                     inlineScript: |
                       az webapp config appsettings set \
                         --name $(WEBAPP_NAME) \
@@ -139,9 +139,9 @@ stages:
                           SPRING_DATASOURCE_PASSWORD="$(DB_PASSWORD)"
 
                 - task: AzureWebAppContainer@1
-                  displayName: 'Deploy Container to Azure Web App'
+                  displayName: "Deploy Container to Azure Web App"
                   inputs:
-                    azureSubscription: 'AzureConnection'
-                    appName: '$(WEBAPP_NAME)'
-                    imageName: '$(ACR_NAME).azurecr.io/$(imageName):$(Build.BuildId)'
-                    containerRegistryEndpoint: 'ACRConnection'
+                    azureSubscription: "AzureConnection"
+                    appName: "$(WEBAPP_NAME)"
+                    imageName: "$(ACR_NAME).azurecr.io/$(imageName):$(Build.BuildId)"
+                    containerRegistryEndpoint: "ACRConnection"
