@@ -1,4 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/0LozK0wt)
+
 # CheckPoint 6: DevOps e CI/CD com Azure DevOps
 
 ## Integrantes
@@ -13,16 +14,19 @@
 Este projeto implementa uma solução completa de DevOps e CI/CD para a aplicação **transactions-services** do banco DimDim. A solução automatiza todo o ciclo de vida da aplicação, desde a compilação e testes até o deploy em produção no Azure.
 
 A aplicação é um serviço de transações bancárias desenvolvido em **Kotlin** com **Spring Boot**, responsável por:
+
 - Processamento de transferências, TEDs, PIX, depósitos e saques
 - Controle de extratos bancários
 
 A infraestrutura utiliza:
+
 - **Azure DevOps** para CI/CD Pipeline
 - **Azure Container Registry (ACR)** para armazenamento de imagens Docker
 - **Azure Web App** para hospedagem da aplicação
 - **Azure SQL Database** para persistência de dados
 
 O pipeline automatizado realiza:
+
 1. Build e execução de testes automatizados
 2. Geração de imagem Docker
 3. Push da imagem para o ACR
@@ -36,7 +40,7 @@ O pipeline automatizado realiza:
 
 ![Evidência 1: Pipeline Build e Testes](evidencias/evidencia-1-pipeline-build.png)
 
-*Descrição: Print da execução do pipeline mostrando o stage Build com compilação e testes executados com sucesso.*
+_Descrição: Print da execução do pipeline mostrando o stage Build com compilação e testes executados com sucesso._
 
 ---
 
@@ -44,7 +48,7 @@ O pipeline automatizado realiza:
 
 ![Evidência 2: Imagem Docker no ACR](evidencias/evidencia-2-acr-imagem.png)
 
-*Descrição: Print do Azure Container Registry mostrando a imagem `transaction` com as tags `latest` e o Build ID.*
+_Descrição: Print do Azure Container Registry mostrando a imagem `transaction` com as tags `latest` e o Build ID._
 
 ---
 
@@ -52,7 +56,7 @@ O pipeline automatizado realiza:
 
 ![Evidência 3: Deploy no WebApp](evidencias/evidencia-3-deploy-webapp.png)
 
-*Descrição: Print do stage Deploy no pipeline mostrando o deploy concluído com sucesso e a configuração do container.*
+_Descrição: Print do stage Deploy no pipeline mostrando o deploy concluído com sucesso e a configuração do container._
 
 ---
 
@@ -60,7 +64,7 @@ O pipeline automatizado realiza:
 
 ![Evidência 4: Aplicação Funcionando](evidencias/evidencia-4-app-funcionando.png)
 
-*Descrição: Print da aplicação acessível e funcionando no WebApp, mostrando a URL e a resposta da API.*
+_Descrição: Print da aplicação acessível e funcionando no WebApp, mostrando a URL e a resposta da API._
 
 ---
 
@@ -68,7 +72,7 @@ O pipeline automatizado realiza:
 
 ![Evidência 5: Logs do Pipeline](evidencias/evidencia-5-logs-pipeline.png)
 
-*Descrição: Print dos logs completos do pipeline mostrando todas as etapas (Build → Docker → Deploy) executadas com sucesso.*
+_Descrição: Print dos logs completos do pipeline mostrando todas as etapas (Build → Docker → Deploy) executadas com sucesso._
 
 ---
 
