@@ -1,23 +1,14 @@
+# Pipeline automatically triggers on push to main/master branches
+# Excludes markdown files and evidence folder
 trigger:
   branches:
     include:
       - main
       - master
   paths:
-    include:
-      - '**/*.kt'
-      - '**/*.java'
-      - '**/*.kts'
-      - '**/*.yml'
-      - '**/*.yaml'
-      - '**/Dockerfile'
-      - '**/*.properties'
-      - '**/*.sql'
-      - '**/build.gradle*'
-      - '**/gradlew*'
     exclude:
       - README.md
-      - '**/*.md'
+      - '*.md'
       - 'evidencias/**'
 
 variables:
