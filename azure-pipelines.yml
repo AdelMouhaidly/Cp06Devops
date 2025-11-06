@@ -31,16 +31,19 @@ stages:
           vmImage: 'ubuntu-latest'
         
         steps:
-          - task: UseJavaVersion@1
-            displayName: 'Set Java Version'
+          - task: JavaToolInstaller@0
+            displayName: 'Install Java 21'
             inputs:
               versionSpec: '21'
               jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'PreInstalled'
 
           - script: |
               chmod +x gradlew
               echo "Gradle wrapper is executable"
-            displayName: 'Make gradlew executable'
+              echo "Java version:"
+              java -version
+            displayName: 'Make gradlew executable and verify Java'
 
           - task: Gradle@3
             displayName: 'Build and Test Application'
