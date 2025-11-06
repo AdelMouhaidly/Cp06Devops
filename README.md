@@ -51,6 +51,14 @@ _Descrição: Captura de tela do Azure DevOps mostrando o resumo completo da exe
 
 ---
 
+### 6. Resposta da API Funcionando
+
+![Evidência 6: Resposta da API](evidencias/evidencia7.png)
+
+_Descrição: Captura de tela do navegador mostrando a resposta da API REST funcionando corretamente. A imagem exibe a requisição GET para o endpoint `/statements/{customerId}` com status HTTP 200 OK, retornando um JSON válido (array vazio `[]` quando não há dados ou lista de extratos bancários quando existem registros). A imagem demonstra que a aplicação está deployada, acessível e respondendo corretamente às requisições HTTP._
+
+---
+
 ## Desafio
 
 Você faz parte do time de tecnologia responsável pelo **Projeto DimDim**, do banco DimDim, uma instituição financeira nacional com mais de 1 milhão de correntistas. O banco está passando por uma transformação digital para se tornar mais ágil, moderno e competitivo, melhorando a experiência de seus clientes nos canais digitais e físicos.
