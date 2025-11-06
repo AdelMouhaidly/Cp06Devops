@@ -43,23 +43,29 @@ stages:
               ls -la $(projectPath) | head -20
             displayName: 'Make gradlew executable and verify'
 
+          - task: JavaToolInstaller@0
+            displayName: 'Setup Java 21'
+            inputs:
+              versionSpec: '21'
+              jdkArchitecture: 'x64'
+              jdkSource: 'PreInstalled'
+
           - script: |
               cd $(projectPath)
+              echo "=== Java Version ==="
+              java -version
+              echo "=== Checking Gradle version ==="
               ./gradlew --version
-            displayName: 'Check Gradle version'
-
-          - task: Gradle@3
+              echo "=== Running clean build with full output ==="
+              ./gradlew clean build --stacktrace || (echo "=== BUILD FAILED - Check logs above ===" && exit 1)
             displayName: 'Build and Test Application'
+          
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            condition: always()
             inputs:
-              workingDirectory: '$(projectPath)'
-              gradleWrapperFile: '$(projectPath)/gradlew'
-              options: '-Xmx3072m --stacktrace --info'
-              tasks: 'clean build'
-              publishJUnitResults: true
               testResultsFiles: '**/TEST-*.xml'
-              javaHomeOption: 'JDKVersion'
-              jdkVersion: 'JDK21'
-              jdkArchitecture: 'x64'
+              testRunTitle: 'Test Results'
 
   - stage: Docker
     displayName: 'Build and Push Docker Image'
