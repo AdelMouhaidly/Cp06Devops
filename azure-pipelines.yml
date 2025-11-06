@@ -12,8 +12,6 @@ variables:
   - group: 557705-variables
   - name: imageName
     value: 'transaction'
-  - name: dockerfilePath
-    value: '$(Build.SourcesDirectory)/Dockerfile'
   - name: tag
     value: '$(Build.BuildId)'
 
@@ -27,11 +25,22 @@ stages:
           vmImage: 'ubuntu-latest'
         
         steps:
+          - script: |
+              if [ -f "$(Build.SourcesDirectory)/gradlew" ]; then
+                echo "##vso[task.setvariable variable=projectPath]$(Build.SourcesDirectory)"
+              elif [ -f "$(Build.SourcesDirectory)/2tdsa-cp6-cp06/gradlew" ]; then
+                echo "##vso[task.setvariable variable=projectPath]$(Build.SourcesDirectory)/2tdsa-cp6-cp06"
+              else
+                echo "Gradle wrapper not found!"
+                exit 1
+              fi
+            displayName: 'Detect project path'
+
           - task: Gradle@3
             displayName: 'Build and Test Application'
             inputs:
-              workingDirectory: '$(System.DefaultWorkingDirectory)'
-              gradleWrapperFile: '$(System.DefaultWorkingDirectory)/gradlew'
+              workingDirectory: '$(projectPath)'
+              gradleWrapperFile: '$(projectPath)/gradlew'
               options: '-Xmx3072m'
               tasks: 'clean build'
               publishJUnitResults: true
@@ -57,6 +66,19 @@ stages:
               command: 'login'
               containerRegistry: 'ACRConnection'
 
+          - script: |
+              if [ -f "$(Build.SourcesDirectory)/Dockerfile" ]; then
+                echo "##vso[task.setvariable variable=dockerfilePath]$(Build.SourcesDirectory)/Dockerfile"
+                echo "##vso[task.setvariable variable=buildContext]$(Build.SourcesDirectory)"
+              elif [ -f "$(Build.SourcesDirectory)/2tdsa-cp6-cp06/Dockerfile" ]; then
+                echo "##vso[task.setvariable variable=dockerfilePath]$(Build.SourcesDirectory)/2tdsa-cp6-cp06/Dockerfile"
+                echo "##vso[task.setvariable variable=buildContext]$(Build.SourcesDirectory)/2tdsa-cp6-cp06"
+              else
+                echo "Dockerfile not found!"
+                exit 1
+              fi
+            displayName: 'Detect Dockerfile path'
+
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
             inputs:
@@ -64,6 +86,7 @@ stages:
               repository: '$(imageName)'
               containerRegistry: 'ACRConnection'
               dockerfile: '$(dockerfilePath)'
+              buildContext: '$(buildContext)'
               tags: |
                 $(tag)
                 latest
