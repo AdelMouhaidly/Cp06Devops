@@ -56,8 +56,15 @@ stages:
               java -version
               echo "=== Checking Gradle version ==="
               ./gradlew --version
-              echo "=== Running clean build with full output ==="
-              ./gradlew clean build --stacktrace || (echo "=== BUILD FAILED - Check logs above ===" && exit 1)
+              echo "=== Running clean build ==="
+              set -o pipefail
+              ./gradlew clean build --stacktrace 2>&1 | tee /tmp/gradle-output.log
+              EXIT_CODE=${PIPESTATUS[0]}
+              if [ $EXIT_CODE -ne 0 ]; then
+                echo "=== BUILD FAILED - Last 100 lines ==="
+                tail -100 /tmp/gradle-output.log
+                exit $EXIT_CODE
+              fi
             displayName: 'Build and Test Application'
           
           - task: PublishTestResults@2
