@@ -1,6 +1,77 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/0LozK0wt)
 # CheckPoint 6: DevOps e CI/CD com Azure DevOps
 
+## Integrantes
+
+- **Afonso Correia Pereira** - RM557863 - 2TDSA
+- **Adel Mouhaidly** - RM557705 - 2TDSA
+
+---
+
+## Descrição do Projeto
+
+Este projeto implementa uma solução completa de DevOps e CI/CD para a aplicação **transactions-services** do banco DimDim. A solução automatiza todo o ciclo de vida da aplicação, desde a compilação e testes até o deploy em produção no Azure.
+
+A aplicação é um serviço de transações bancárias desenvolvido em **Kotlin** com **Spring Boot**, responsável por:
+- Processamento de transferências, TEDs, PIX, depósitos e saques
+- Controle de extratos bancários
+
+A infraestrutura utiliza:
+- **Azure DevOps** para CI/CD Pipeline
+- **Azure Container Registry (ACR)** para armazenamento de imagens Docker
+- **Azure Web App** para hospedagem da aplicação
+- **Azure SQL Database** para persistência de dados
+
+O pipeline automatizado realiza:
+1. Build e execução de testes automatizados
+2. Geração de imagem Docker
+3. Push da imagem para o ACR
+4. Deploy automático no Azure Web App
+
+---
+
+## Evidências da Implementação
+
+### 1. Pipeline Executando (Build e Testes)
+
+![Evidência 1: Pipeline Build e Testes](evidencias/evidencia-1-pipeline-build.png)
+
+*Descrição: Print da execução do pipeline mostrando o stage Build com compilação e testes executados com sucesso.*
+
+---
+
+### 2. Imagem Docker no Azure Container Registry
+
+![Evidência 2: Imagem Docker no ACR](evidencias/evidencia-2-acr-imagem.png)
+
+*Descrição: Print do Azure Container Registry mostrando a imagem `transaction` com as tags `latest` e o Build ID.*
+
+---
+
+### 3. Deploy no Azure Web App
+
+![Evidência 3: Deploy no WebApp](evidencias/evidencia-3-deploy-webapp.png)
+
+*Descrição: Print do stage Deploy no pipeline mostrando o deploy concluído com sucesso e a configuração do container.*
+
+---
+
+### 4. Aplicação Funcionando no WebApp
+
+![Evidência 4: Aplicação Funcionando](evidencias/evidencia-4-app-funcionando.png)
+
+*Descrição: Print da aplicação acessível e funcionando no WebApp, mostrando a URL e a resposta da API.*
+
+---
+
+### 5. Logs do Pipeline Completo
+
+![Evidência 5: Logs do Pipeline](evidencias/evidencia-5-logs-pipeline.png)
+
+*Descrição: Print dos logs completos do pipeline mostrando todas as etapas (Build → Docker → Deploy) executadas com sucesso.*
+
+---
+
 ## Desafio
 
 Você faz parte do time de tecnologia responsável pelo **Projeto DimDim**, do banco DimDim, uma instituição financeira nacional com mais de 1 milhão de correntistas. O banco está passando por uma transformação digital para se tornar mais ágil, moderno e competitivo, melhorando a experiência de seus clientes nos canais digitais e físicos.
