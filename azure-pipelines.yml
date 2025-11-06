@@ -47,8 +47,8 @@ stages:
             displayName: 'Setup Java 21'
             inputs:
               versionSpec: '21'
-              jdkArchitecture: 'x64'
-              jdkSource: 'PreInstalled'
+              jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'PreInstalled'
 
           - script: |
               cd $(projectPath)
