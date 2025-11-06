@@ -1,4 +1,3 @@
--- Migration for PostgreSQL
 CREATE TABLE bank_statement (
     id BIGSERIAL PRIMARY KEY,
     customer_id VARCHAR(255) NOT NULL,

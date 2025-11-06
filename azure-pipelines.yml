@@ -1,6 +1,3 @@
-# Azure DevOps CI/CD Pipeline for transactions-services
-# Automates: Build, Test, Docker Build, Push to ACR, Deploy to WebApp
-
 trigger:
   branches:
     include:
@@ -13,7 +10,7 @@ trigger:
       - evidencias/**
 
 variables:
-  - group: AzureResources 
+  - group: AzureResources
   - name: imageName
     value: "transaction"
   - name: dockerfilePath

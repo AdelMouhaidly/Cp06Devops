@@ -21,7 +21,6 @@ az acr create --resource-group $RG --name $ACR_NAME --sku Basic --admin-enabled
 ACR_USERNAME=$(az acr credential show --name "$ACR_NAME" --query "username" -o tsv)
 ACR_PASSWORD=$(az acr credential show --name "$ACR_NAME" --query "passwords[0].value" -o tsv)
 
-# Create PostgreSQL Flexible Server
 az postgres flexible-server create \
   --resource-group $RG \
   --name $SERVER_NAME \
@@ -34,7 +33,6 @@ az postgres flexible-server create \
   --storage-size 32 \
   --public-access 0.0.0.0-255.255.255.255
 
-# Create database
 az postgres flexible-server db create \
   --resource-group $RG \
   --server-name $SERVER_NAME \
