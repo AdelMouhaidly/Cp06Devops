@@ -9,7 +9,7 @@ trigger:
       - '*.md'
 
 variables:
-  - group: AzureResources
+  - group: 557705-variables
   - name: imageName
     value: 'transaction'
   - name: dockerfilePath
